@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 ARCH:=arm
-BOARD:=zynq7000
+BOARD:=zynq
 BOARDNAME:=Xilinx Zynq7000 silicons
 FEATURES:=usb gpio arm_v7
 CPU_TYPE:=cortex-a9
