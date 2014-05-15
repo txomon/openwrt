@@ -14,7 +14,7 @@ FEATURES:=usb gpio arm_v7
 CPU_TYPE:=cortex-a9
 SUBTARGETS:=zedboard
 
-LINUX_VERSION:=3.13
+LINUX_VERSION:=3.13.7
 
 MAINTAINER:=Javier Domingo Cansino <javierdo1@gmail.com>
 
