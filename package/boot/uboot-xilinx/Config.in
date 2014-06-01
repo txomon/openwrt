@@ -1,0 +1,11 @@
+if PACKAGE_uboot-zynq-zedboard
+
+config XILINX_ISE_PATH
+	string "Xilinx installation PATH"
+	help
+	  In order to generate the boot.bin to make Xilinx Zynq boards
+	  boot, you need to configure which is the path to your ISE
+	  installation, providing a path where EDK/ and ISE/ folders
+	  can be found
+
+endif

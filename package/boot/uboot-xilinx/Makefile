@@ -7,6 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
+# Build information
 PKG_NAME:=u-boot
 PKG_VERSION:=2014.04
 PKG_RELEASE:=0
@@ -19,6 +20,8 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
 
+
+# Boards
 include $(INCLUDE_DIR)/package.mk
 
 define uboot/Default
@@ -34,6 +37,15 @@ endef
 
 UBOOTS := \
 	zedboard
+
+
+# Package templates
+
+define Package/uboot/config/template
+define Package/uboot-zynq-$(1)/config
+	source "package/boot/uboot-xilinx/Config.in"
+endef
+endef
 
 define Package/uboot/template
 define Package/uboot-zynq-$(1)
@@ -56,7 +68,7 @@ endef
 ifdef BUILD_VARIANT
 $(eval $(call uboot/$(BUILD_VARIANT)))
 UBOOT_CONFIG:=$(if $(CONFIG),$(CONFIG),$(BUILD_VARIANT))
-UBOOT_IMAGE:=$(if $(IMAGE),$(IMAGE),$(BUILD_VARIANT)-u-boot.img)
+UBOOT_IMAGE:=$(if $(IMAGE),$(IMAGE),openwrt-$(BOARD)-$(BUILD_VARIANT)-u-boot.bin)
 endif
 
 define Build/Configure
@@ -70,18 +82,29 @@ endef
 
 
 define Package/uboot/install/template
-define Package/uboot-$(1)/install
+define Package/uboot-zynq-$(1)/install
 	$(INSTALL_DIR) $$(1)
 	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/$(2)
 endef
 endef
 
 
+# Compilation steps
+ifneq ($(CONFIG_XILINX_ISE_PATH),)
+  define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(CP) $(CONFIG_XILINX_ISE_PATH)/EDK/sw/lib/hwplatform_templates/zed_hw_platform/ps7_init.{c,h} \
+		$(PKG_BUILD_DIR)/board/xilinx/zynq
+  endef
+endif
+
+# Template users
 $(foreach u,$(UBOOTS), \
 	$(eval $(call Package/uboot/install/template,$(u),$(BOARD)-$(u)-u-boot.img)) \
+	$(eval $(call Package/uboot/config/template,$(u))) \
 )
 
 $(foreach u,$(UBOOTS), \
 	$(eval $(call BuildUBootPackage,$(u))) \
-	$(eval $(call BuildPackage,uboot-$(u))) \
+	$(eval $(call BuildPackage,uboot-zynq-$(u))) \
 )
