@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 OpenWrt.org
+# Copyright (C) 2014 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -56,7 +56,7 @@ endef
 ifdef BUILD_VARIANT
 $(eval $(call uboot/$(BUILD_VARIANT)))
 UBOOT_CONFIG:=$(if $(CONFIG),$(CONFIG),$(BUILD_VARIANT))
-UBOOT_IMAGE:=$(if $(IMAGE),$(IMAGE),openwrt-$(BOARD)-$(BUILD_VARIANT)-u-boot.bin)
+UBOOT_IMAGE:=$(if $(IMAGE),$(IMAGE),$(BUILD_VARIANT)-u-boot.img)
 endif
 
 define Build/Configure
@@ -70,7 +70,7 @@ endef
 
 
 define Package/uboot/install/template
-define Package/uboot-zynq-$(1)/install
+define Package/uboot-$(1)/install
 	$(INSTALL_DIR) $$(1)
 	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/$(2)
 endef
@@ -78,10 +78,10 @@ endef
 
 
 $(foreach u,$(UBOOTS), \
-	$(eval $(call Package/uboot/install/template,$(u),openwrt-$(BOARD)-$(SUBTARGET)-$(u)-u-boot.bin)) \
+	$(eval $(call Package/uboot/install/template,$(u),$(BOARD)-$(u)-u-boot.img)) \
 )
 
 $(foreach u,$(UBOOTS), \
 	$(eval $(call BuildUBootPackage,$(u))) \
-	$(eval $(call BuildPackage,uboot-zynq-$(u))) \
+	$(eval $(call BuildPackage,uboot-$(u))) \
 )
