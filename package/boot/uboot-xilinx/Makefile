@@ -12,7 +12,7 @@ PKG_VERSION:=2014.04
 PKG_RELEASE:=0
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git://github.com/xilinx/uboot-xlnx
+PKG_SOURCE_URL:=git://github.com/xilinx/u-boot-xlnx
 PKG_SOURCE_VERSION:=2a0536fa48db1fc5332e3cd33b846d0da0c8bc1e
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -29,7 +29,7 @@ endef
 
 define uboot/zedboard
   TITLE:=U-Boot for Zedboard Zynq
-  CONFIG:=zynq_zc70x_config
+  CONFIG:=zynq_zc70x
 endef
 
 UBOOTS := \
