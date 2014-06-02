@@ -14,7 +14,7 @@ define Image/BuildKernel
 		0x80000000 \
 		-n 'ARM OpenWrt Linux-$(LINUX_VERSION)' \
 		-d $(KDIR)/vmlinux.lzma $(KDIR)/uImage
-	cp $(KDIR)/uImage $(BIN_DIR)/$(IMG_PREFIX)-uImage
+	cp $(KDIR)/uImage $(BIN_DIR)/zedboard-uImage
 endef
 
 define Image/Prepare

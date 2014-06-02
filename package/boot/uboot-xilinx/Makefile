@@ -39,23 +39,23 @@ define Package/uboot-zynq-zedboard/config
 	source "package/boot/uboot-xilinx/Config.in"
 endef
 
-ifneq ($(CONFIG_XILINX_ISE_PATH),)
-  define Build/Prepare
+define Build/Prepare
 	$(call Build/Prepare/Default)
+
+  ifneq ($(CONFIG_XILINX_ISE_PATH),)
 	$(CP) $(CONFIG_XILINX_ISE_PATH)/EDK/sw/lib/hwplatform_templates/zed_hw_platform/ps7_init.{c,h} \
 		$(PKG_BUILD_DIR)/board/xilinx/zynq
-  endef
-  define Package/uboot-zynq-zedboard/install
+  endif
+endef
+
+define Package/uboot-zynq-zedboard/install
 	$(INSTALL_DIR) $(1)
-	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/zynq-zedboard-u-boot.bin
-	$(CP) $(PKG_BUILD_DIR)/boot.bin $(BIN_DIR)/zynq-zedboard-boot.bin
-  endef
-else
-  define Package/uboot-zynq-zedboard/install
-	$(INSTALL_DIR) $(1)
-	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/zynq-zedboard-u-boot.bin
-  endef
-endif
+	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/zedboard-u-boot.bin
+
+  ifneq ($(CONFIG_XILINX_ISE_PATH),)
+	$(CP) $(PKG_BUILD_DIR)/boot.bin $(BIN_DIR)/zedboard-boot.bin
+  endif
+endef
 
 define Build/Configure
 	$(MAKE) -C $(PKG_BUILD_DIR) zynq_zc70x_config
