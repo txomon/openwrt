@@ -50,7 +50,7 @@ endef
 
 define Package/uboot-zynq-zedboard/install
 	$(INSTALL_DIR) $(1)
-	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/zedboard-u-boot.bin
+	$(CP) $(PKG_BUILD_DIR)/u-boot.img $(BIN_DIR)/zedboard-u-boot.img
 
   ifneq ($(CONFIG_XILINX_ISE_PATH),)
 	$(CP) $(PKG_BUILD_DIR)/boot.bin $(BIN_DIR)/zedboard-boot.bin
