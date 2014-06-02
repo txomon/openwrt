@@ -24,55 +24,41 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSI
 # Boards
 include $(INCLUDE_DIR)/package.mk
 
-define uboot/Default
-  TITLE:=
-  CONFIG:=
-  IMAGE:=
-endef
-
-define uboot/zedboard
-  TITLE:=U-Boot for Zedboard Zynq
-  CONFIG:=zynq_zc70x
-endef
-
-UBOOTS := \
-	zedboard
-
-
-# Package templates
-
-define Package/uboot/config/template
-define Package/uboot-zynq-$(1)/config
-	source "package/boot/uboot-xilinx/Config.in"
-endef
-endef
-
-define Package/uboot/template
-define Package/uboot-zynq-$(1)
+define Package/uboot-zynq-zedboard
   SECTION:=boot
   CATEGORY:=Boot Loaders
   DEPENDS:=@TARGET_zynq
-  TITLE:=$(2)
+  TITLE:=U-Boot for Zedboard Zynq
+  CONFIG:=zynq_zc70x
   URL:=http://www.wiki.xilinx.com/U-boot
   VARIANT:=$(1)
   MAINTAINER:=Javier Domingo Cansino <javierdo1@gmail.com
 endef
+
+define Package/uboot-zynq-zedboard/config
+	source "package/boot/uboot-xilinx/Config.in"
 endef
 
-define BuildUBootPackage
-	$(eval $(uboot/Default))
-	$(eval $(uboot/$(1)))
-	$(call Package/uboot/template,$(1),$(TITLE))
-endef
-
-ifdef BUILD_VARIANT
-$(eval $(call uboot/$(BUILD_VARIANT)))
-UBOOT_CONFIG:=$(if $(CONFIG),$(CONFIG),$(BUILD_VARIANT))
-UBOOT_IMAGE:=$(if $(IMAGE),$(IMAGE),openwrt-$(BOARD)-$(BUILD_VARIANT)-u-boot.bin)
+ifneq ($(CONFIG_XILINX_ISE_PATH),)
+  define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(CP) $(CONFIG_XILINX_ISE_PATH)/EDK/sw/lib/hwplatform_templates/zed_hw_platform/ps7_init.{c,h} \
+		$(PKG_BUILD_DIR)/board/xilinx/zynq
+  endef
+  define Package/uboot-zynq-zedboard/install
+	$(INSTALL_DIR) $(1)
+	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/zynq-zedboard-u-boot.bin
+	$(CP) $(PKG_BUILD_DIR)/boot.bin $(BIN_DIR)/zynq-zedboard-boot.bin
+  endef
+else
+  define Package/uboot-zynq-zedboard/install
+	$(INSTALL_DIR) $(1)
+	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/zynq-zedboard-u-boot.bin
+  endef
 endif
 
 define Build/Configure
-	$(MAKE) -C $(PKG_BUILD_DIR) $(UBOOT_CONFIG)_config
+	$(MAKE) -C $(PKG_BUILD_DIR) zynq_zc70x_config
 endef
 
 define Build/Compile
@@ -80,31 +66,4 @@ define Build/Compile
 		CROSS_COMPILE=$(TARGET_CROSS)
 endef
 
-
-define Package/uboot/install/template
-define Package/uboot-zynq-$(1)/install
-	$(INSTALL_DIR) $$(1)
-	$(CP) $(PKG_BUILD_DIR)/u-boot.bin $(BIN_DIR)/$(2)
-endef
-endef
-
-
-# Compilation steps
-ifneq ($(CONFIG_XILINX_ISE_PATH),)
-  define Build/Prepare
-	$(call Build/Prepare/Default)
-	$(CP) $(CONFIG_XILINX_ISE_PATH)/EDK/sw/lib/hwplatform_templates/zed_hw_platform/ps7_init.{c,h} \
-		$(PKG_BUILD_DIR)/board/xilinx/zynq
-  endef
-endif
-
-# Template users
-$(foreach u,$(UBOOTS), \
-	$(eval $(call Package/uboot/install/template,$(u),$(BOARD)-$(u)-u-boot.img)) \
-	$(eval $(call Package/uboot/config/template,$(u))) \
-)
-
-$(foreach u,$(UBOOTS), \
-	$(eval $(call BuildUBootPackage,$(u))) \
-	$(eval $(call BuildPackage,uboot-zynq-$(u))) \
-)
+$(eval $(call BuildPackage,uboot-zynq-zedboard))
