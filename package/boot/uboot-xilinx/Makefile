@@ -43,8 +43,9 @@ define Build/Prepare
 	$(call Build/Prepare/Default)
 
   ifneq ($(CONFIG_XILINX_ISE_PATH),)
-	$(CP) $(CONFIG_XILINX_ISE_PATH)/EDK/sw/lib/hwplatform_templates/zed_hw_platform/ps7_init.{c,h} \
-		$(PKG_BUILD_DIR)/board/xilinx/zynq
+	$(CP) \
+	 $(CONFIG_XILINX_ISE_PATH)/EDK/sw/lib/hwplatform_templates/zed_hw_platform/ps7_init.{c,h} \
+	 $(PKG_BUILD_DIR)/board/xilinx/zynq
   endif
 endef
 
@@ -58,7 +59,7 @@ define Package/uboot-zynq-zedboard/install
 endef
 
 define Build/Configure
-	$(MAKE) -C $(PKG_BUILD_DIR) zynq_zc70x_config
+	$(MAKE) -C $(PKG_BUILD_DIR) zynq_zed_config
 endef
 
 define Build/Compile
