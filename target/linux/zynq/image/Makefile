@@ -21,7 +21,7 @@ endef
 define Image/BuildKernel
 	mkimage -A arm -O linux -T kernel -C none -a 0x8000 -e 0x8000 \
 		-n 'ARM OpenWrt Linux-$(LINUX_VERSION)' \
-		-d $(KDIR)/vmlinux $(BIN_DIR)/zedboard-uImage
+		-d $(LINUX_DIR)/arch/arm/boot/zImage $(BIN_DIR)/zedboard-uImage
 endef
 
 define Image/Prepare
