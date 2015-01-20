@@ -32,7 +32,7 @@ define Package/uboot-zynq-zedboard
   CONFIG:=zynq_zc70x
   URL:=http://www.wiki.xilinx.com/U-boot
   VARIANT:=$(1)
-  MAINTAINER:=Javier Domingo Cansino <javierdo1@gmail.com
+  MAINTAINER:=Javier Domingo Cansino <javierdo1@gmail.com>
 endef
 
 define Package/uboot-zynq-zedboard/config
